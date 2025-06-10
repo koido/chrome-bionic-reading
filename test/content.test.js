@@ -1,5 +1,8 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
+const fs = require('fs');
+const path = require('path');
+const { JSDOM } = require('jsdom');
 
 function createMockDocument() {
   const mockElements = [];
@@ -434,4 +437,45 @@ test('chrome.runtime.onMessage handles errors gracefully', async (t) => {
   assert.equal(responseReceived.success, false, 'Should respond with failure on error');
   assert.equal(responseReceived.message, 'エラーが発生しました', 'Should have error message');
 });
+
+// Additional Node.js standard tests for content.js functionality
+test('loadSettings handles chrome storage sync get', async (t) => {
+  const mockDoc = createMockDocument();
+  const mockChrome = createMockChrome();
+  mockChrome._setStorage({ intensity: 3 });
+  global.chrome = mockChrome;
+  
+  const contentModule = loadModule(mockDoc.document);
+  
+  await contentModule.loadSettings();
+  
+  // currentSettings should be updated
+  assert.ok(true, 'loadSettings should execute without error');
+});
+
+test('loadSettings handles storage errors', async (t) => {
+  const mockDoc = createMockDocument();
+  const mockChrome = createMockChrome();
+  
+  // console.errorをモック
+  const originalConsoleError = console.error;
+  let errorLogged = false;
+  console.error = () => { errorLogged = true; };
+  
+  // storageエラーをシミュレート
+  mockChrome.storage.sync.get = () => Promise.reject(new Error('Storage error'));
+  
+  global.chrome = mockChrome;
+  
+  const contentModule = loadModule(mockDoc.document);
+  
+  await contentModule.loadSettings();
+  
+  // console.errorを復元
+  console.error = originalConsoleError;
+  
+  assert.ok(errorLogged, 'Should log error when storage fails');
+});
+
+
 

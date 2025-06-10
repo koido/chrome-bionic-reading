@@ -1,0 +1,20 @@
+{
+  "name": "bionic-reading-extension",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "node --test --experimental-test-coverage test/*.test.js",
+    "build": "tsc",
+    "postbuild": "cp manifest.json src/popup.html src/options.html dist/; for size in 16 32 48 128; do [ -f icon${size}.png ] && cp icon${size}.png dist/; done"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@types/chrome": "^0.0.326",
+    "@types/node": "^22.15.30",
+    "typescript": "^5.8.3"
+  }
+}

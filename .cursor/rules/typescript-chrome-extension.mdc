@@ -1,0 +1,112 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# TypeScript Chrome拡張機能開発ルール
+
+このプロジェクトはTypeScriptで開発されたChrome拡張機能です。以下のルールに従って開発してください。
+
+## プロジェクト構成
+
+- [src/](mdc:src): TypeScriptのソースコードを格納。エントリポイントは[content.ts](mdc:src/content.ts)
+- [dist/](mdc:dist): ビルド後の成果物（Chrome拡張として読み込むファイル群）
+- [test/](mdc:test): Jestで動作するテストコードを格納
+- [scripts/](mdc:scripts): ビルド・テスト・一括実行用のシェルスクリプト
+- [manifest.json](mdc:manifest.json): Chrome拡張のマニフェスト（ビルド時はdist/にコピー）
+- [tsconfig.json](mdc:tsconfig.json): TypeScriptの設定ファイル
+- [package.json](mdc:package.json): npmスクリプトや依存管理
+
+## 核心ファイル構成
+
+### TypeScript源泉ファイル
+- [src/content.ts](mdc:src/content.ts): メインのBionic Reading機能
+- [src/popup.ts](mdc:src/popup.ts): 拡張機能ポップアップUI
+- [src/background.ts](mdc:src/background.ts): バックグラウンドサービスワーカー
+- [src/popup.html](mdc:src/popup.html): ポップアップのHTML
+- [src/options.html](mdc:src/options.html): オプションページ
+
+### テストファイル
+- [test/content.test.js](mdc:test/content.test.js): content.jsのテスト
+- [test/popup.test.js](mdc:test/popup.test.js): popup.jsのテスト  
+- [test/background.test.js](mdc:test/background.test.js): background.jsのテスト
+- [test/integration.test.js](mdc:test/integration.test.js): 統合テスト
+
+## 開発ルール
+
+### TypeScript型安全性
+- 必ず型定義を使用し、`any`の使用を避ける
+- Chrome API用の`@types/chrome`を適切に活用
+- interfaceを使用して設定オブジェクトの型を定義
+
+### Chrome拡張機能セキュリティ
+- manifest.jsonの権限は最小限に限定
+- content scriptの挙動に注意（XSS対策）
+- ユーザーデータの取り扱いは慎重に
+
+### コード品質
+- 各ファイルはsingle responsibilityを維持
+- エラーハンドリングを適切に実装
+- 非同期処理はPromise/async-awaitを使用
+
+### テストカバレッジ
+- **目標**: 全体85%以上のカバレッジ
+- 新機能追加時は必ずテストを追加
+- モック環境でChrome APIをシミュレート
+- 統合テストで全体ワークフローを検証
+
+## ビルド・デプロイプロセス
+
+### ビルドコマンド
+```bash
+npm run build          # TypeScriptコンパイル
+npm run postbuild      # HTMLファイル・アイコンコピー
+bash scripts/build.sh  # 完全ビルド
+bash scripts/all.sh    # ビルド+テスト実行
+```
+
+### テスト実行
+```bash
+npm test                        # 全テスト実行（カバレッジ付き）
+npm test test/content.test.js   # 個別テスト実行
+```
+
+### dist/配下の成果物
+ビルド後、以下のファイルが[dist/](mdc:dist)に生成される：
+- manifest.json (権限設定含む)
+- content.js (Bionic Reading機能)
+- popup.js + popup.html (ポップアップUI)
+- background.js (サービスワーカー)
+- options.html (オプションページ)
+- icon*.png (4サイズのアイコン)
+
+## エラー対応・デバッグ
+
+### Chrome拡張機能が動作しない場合
+1. Chrome Developer Toolsでエラー確認
+2. chrome://extensions で拡張機能を再読み込み
+3. Background script エラー: サービスワーカーのログ確認
+4. manifest.jsonの権限設定確認
+
+### テスト失敗時
+1. モックオブジェクトの設定確認
+2. 非同期処理のタイミング調整
+3. Chrome APIの模擬が正しく動作しているか確認
+
+## 品質基準
+
+### コード品質チェックリスト
+- [ ] TypeScript型エラーなし
+- [ ] テストカバレッジ85%以上
+- [ ] 全テストパス
+- [ ] Chrome拡張機能として正常動作
+- [ ] セキュリティ権限最小化
+- [ ] エラーハンドリング実装
+
+### リリース前確認
+- [ ] `bash scripts/all.sh` でエラーなし
+- [ ] Chrome環境での動作確認
+- [ ] ポップアップ・オプションページ動作確認
+- [ ] Bionic Reading機能の動作確認
+
+この開発ルールに従い、品質の高いTypeScript Chrome拡張機能を開発してください。

@@ -1,0 +1,36 @@
+# Node modules
+node_modules/
+
+# Build output
+dist/
+build/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Env files
+.env
+.env.*
+
+# VSCode settings
+.vscode/
+
+# Chrome extension specific
+*.crx
+*.pem
+
+# Dist specific files
+dist/icon16.png
+dist/icon32.png
+dist/icon48.png
+dist/icon128.png
+dist/options.html 

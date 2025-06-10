@@ -1,0 +1,17 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# プロジェクト構成ガイド
+
+このリポジトリはTypeScriptで開発されたChrome拡張機能です。
+
+- [src/](mdc:src): TypeScriptのソースコードを格納。エントリポイントはcontent.ts。
+- [dist/](mdc:dist): ビルド後の成果物（Chrome拡張として読み込むファイル群）。manifest.jsonもここにコピーされる。
+- [test/](mdc:test): 主にJest等で動作するテストコードを格納。
+- [scripts/](mdc:scripts): ビルド・テスト・一括実行用のシェルスクリプト（build.sh, test.sh, all.sh）を配置。
+- [manifest.json](mdc:manifest.json): Chrome拡張のマニフェスト。ビルド時はdist/にもコピーされる。
+- [tsconfig.json](mdc:tsconfig.json): TypeScriptの設定ファイル。
+- [package.json](mdc:package.json): npmスクリプトや依存管理。
+- [README.md](mdc:README.md): プロジェクトの概要・セットアップ・使い方説明。

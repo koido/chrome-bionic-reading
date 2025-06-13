@@ -5,7 +5,7 @@
  */
 
 interface BionicSettings {
-  intensity: number; // 1=弱め, 2=やや弱め, 3=普通, 4=やや強め, 5=強め
+  intensity: number; // 0=なし, 1=弱め, 2=やや弱め, 3=普通, 4=やや強め, 5=強め
   lineHeight: number;
 }
 
@@ -61,6 +61,12 @@ class BackgroundService {
 
   async handleMessage(message: any, sender: any, sendResponse: (response: any) => void): Promise<void> {
     try {
+      // messageがnullまたはundefinedの場合のハンドリング
+      if (!message || typeof message !== 'object') {
+        sendResponse({ success: false, error: 'Invalid message format' });
+        return;
+      }
+
       switch (message.type) {
         case 'GET_SETTINGS':
           const settings = await chrome.storage.sync.get(this.defaultSettings);

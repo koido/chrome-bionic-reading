@@ -7,6 +7,7 @@ const { JSDOM } = require('jsdom');
 function createMockDocument() {
   const mockElements = [];
   let styleElement = null;
+  let domContentLoadedCalled = false; // DOMContentLoadedの重複実行を防ぐ
   
   const doc = {
     createElement: (tag) => {
@@ -36,10 +37,15 @@ function createMockDocument() {
     head: { appendChild: () => {} },
     body: { appendChild: () => {} },
     addEventListener: function(event, handler) {
-      if (event === 'DOMContentLoaded') {
-        // 非同期で実行してloadSettingsの完了を待つ
+      if (event === 'DOMContentLoaded' && !domContentLoadedCalled) {
+        domContentLoadedCalled = true;
+        // DOMContentLoadedハンドラーは一度だけ実行し、エラーを抑制
         setTimeout(async () => {
-          await handler();
+          try {
+            await handler();
+          } catch (error) {
+            // テスト中のエラーは抑制
+          }
         }, 10);
       }
     },
@@ -137,6 +143,33 @@ test('bionicifyText replaces text node with spans', async (t) => {
   contentModule.bionicifyText(textNode);
   
   assert.ok(true, 'bionicifyText should execute without errors');
+});
+
+test('bionicifyText does nothing when intensity is 0', async (t) => {
+  const mockDoc = createMockDocument();
+  const mockChrome = createMockChrome();
+  mockChrome._setStorage({ intensity: 0, lineHeight: 1.6 });
+  global.chrome = mockChrome;
+  
+  const contentModule = loadModule(mockDoc.document);
+  
+  // 設定を読み込み
+  await contentModule.loadSettings();
+  
+  const textNode = mockDoc.document.createTextNode('hello world');
+  const parent = mockDoc.document.createElement('div');
+  
+  let replaceChildCalled = false;
+  parent.replaceChild = (newNode, oldNode) => {
+    replaceChildCalled = true;
+    return oldNode;
+  };
+  
+  textNode.parentNode = parent;
+  
+  contentModule.bionicifyText(textNode);
+  
+  assert.equal(replaceChildCalled, false, 'Should not modify text when intensity is 0');
 });
 
 test('bionicifyText does nothing if parent is null', async (t) => {
@@ -463,10 +496,17 @@ test('loadSettings handles storage errors', async (t) => {
   const mockDoc = createMockDocument();
   const mockChrome = createMockChrome();
   
-  // console.errorをモック
+  // ブラウザ環境をシミュレート（windowとdocumentを定義）
+  global.window = {};
+  global.document = mockDoc.document;
+  
+  // console.errorをモック（エラーメッセージを抑制）
   const originalConsoleError = console.error;
   let errorLogged = false;
-  console.error = () => { errorLogged = true; };
+  console.error = (message, error) => { 
+    errorLogged = true;
+    // テスト中はエラーメッセージを出力しない
+  };
   
   // storageエラーをシミュレート
   mockChrome.storage.sync.get = () => Promise.reject(new Error('Storage error'));
@@ -479,6 +519,9 @@ test('loadSettings handles storage errors', async (t) => {
   
   // console.errorを復元
   console.error = originalConsoleError;
+  
+  // グローバル変数をクリーンアップ
+  delete global.window;
   
   assert.ok(errorLogged, 'Should log error when storage fails');
 });

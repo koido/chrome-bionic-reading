@@ -5,7 +5,7 @@
  */
 
 interface BionicSettings {
-  intensity: number; // 1=弱め, 2=やや弱め, 3=普通, 4=やや強め, 5=強め
+  intensity: number; // 0=なし, 1=弱め, 2=やや弱め, 3=普通, 4=やや強め, 5=強め
   lineHeight: number;
 }
 
@@ -17,11 +17,12 @@ class OptionsController {
   private previewDiv: HTMLElement;
   
   private readonly previewTexts: { [key: number]: string } = {
-    1: 'これは <strong>B</strong>ionic <strong>R</strong>eading の <strong>プ</strong>レビュー <strong>テ</strong>キスト です。 <strong>設</strong>定 を <strong>変</strong>更 すると <strong>こ</strong>の <strong>テ</strong>キスト が <strong>リ</strong>アルタイム で <strong>更</strong>新 されます。',
-    2: 'これは <strong>Bi</strong>onic <strong>Re</strong>ading の <strong>プレ</strong>ビュー <strong>テキ</strong>スト です。 <strong>設定</strong> を <strong>変更</strong> すると <strong>この</strong> <strong>テキ</strong>スト が <strong>リア</strong>ルタイム で <strong>更新</strong> されます。',
-    3: 'これは <strong>Bio</strong>nic <strong>Rea</strong>ding の <strong>プレビ</strong>ュー <strong>テキス</strong>ト です。 <strong>設定</strong> を <strong>変更</strong> すると <strong>この</strong> <strong>テキス</strong>ト が <strong>リアル</strong>タイム で <strong>更新</strong> されます。',
-    4: 'これは <strong>Bion</strong>ic <strong>Read</strong>ing の <strong>プレビュ</strong>ー <strong>テキスト</strong> です。 <strong>設定</strong> を <strong>変更</strong> すると <strong>この</strong> <strong>テキスト</strong> が <strong>リアルタ</strong>イム で <strong>更新</strong> されます。',
-    5: 'これは <strong>Bioni</strong>c <strong>Readi</strong>ng の <strong>プレビュー</strong> <strong>テキスト</strong> です。 <strong>設定</strong> を <strong>変更</strong> すると <strong>この</strong> <strong>テキスト</strong> が <strong>リアルタイ</strong>ム で <strong>更新</strong> されます。'
+    0: 'これは Reading Aid のプレビューテキストです。設定を変更するとこのテキストがリアルタイムで更新されます。',
+    1: 'これは <strong>R</strong>eading <strong>A</strong>id の <strong>プ</strong>レビュー <strong>テ</strong>キスト です。 <strong>設</strong>定 を <strong>変</strong>更 すると <strong>こ</strong>の <strong>テ</strong>キスト が <strong>リ</strong>アルタイム で <strong>更</strong>新 されます。',
+    2: 'これは <strong>Re</strong>ading <strong>Ai</strong>d の <strong>プレ</strong>ビュー <strong>テキ</strong>スト です。 <strong>設定</strong> を <strong>変更</strong> すると <strong>この</strong> <strong>テキ</strong>スト が <strong>リア</strong>ルタイム で <strong>更新</strong> されます。',
+    3: 'これは <strong>Rea</strong>ding <strong>Aid</strong> の <strong>プレビ</strong>ュー <strong>テキス</strong>ト です。 <strong>設定</strong> を <strong>変更</strong> すると <strong>この</strong> <strong>テキス</strong>ト が <strong>リアル</strong>タイム で <strong>更新</strong> されます。',
+    4: 'これは <strong>Read</strong>ing <strong>Aid</strong> の <strong>プレビュ</strong>ー <strong>テキスト</strong> です。 <strong>設定</strong> を <strong>変更</strong> すると <strong>この</strong> <strong>テキスト</strong> が <strong>リアルタ</strong>イム で <strong>更新</strong> されます。',
+    5: 'これは <strong>Readi</strong>ng <strong>Aid</strong> の <strong>プレビュー</strong> <strong>テキスト</strong> です。 <strong>設定</strong> を <strong>変更</strong> すると <strong>この</strong> <strong>テキスト</strong> が <strong>リアルタイ</strong>ム で <strong>更新</strong> されます。'
   };
 
   constructor() {

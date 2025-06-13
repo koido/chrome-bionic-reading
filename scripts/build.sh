@@ -5,6 +5,9 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$SCRIPT_DIR/.."
 
+# distディレクトリをクリーン
+rm -rf dist/*
+
 # ネットワークチェック関数
 check_network() {
   if command -v nc >/dev/null 2>&1; then

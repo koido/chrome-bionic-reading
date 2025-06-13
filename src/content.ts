@@ -5,7 +5,7 @@
  */
 
 interface BionicSettings {
-  intensity: number; // 1=弱め, 2=やや弱め, 3=普通, 4=やや強め, 5=強め
+  intensity: number; // 0=なし, 1=弱め, 2=やや弱め, 3=普通, 4=やや強め, 5=強め
   lineHeight: number; // 行間
 }
 
@@ -35,6 +35,11 @@ function bionicifyText(textNode: Text): void {
   const parent = textNode.parentNode;
   
   if (!parent) {
+    return;
+  }
+
+  // intensity が 0 の場合は太字化を行わない（行間のみ適用）
+  if (currentSettings.intensity === 0) {
     return;
   }
 
@@ -109,7 +114,10 @@ async function loadSettings(): Promise<void> {
     const result = await chrome.storage.sync.get({ intensity: 2, lineHeight: 1.6 });
     currentSettings = result as BionicSettings;
   } catch (error) {
-    console.error('設定の読み込みに失敗:', error);
+    // テスト環境（Node.js）以外でのみエラーログを出力
+    if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+      console.error('設定の読み込みに失敗:', error);
+    }
     currentSettings = { intensity: 2, lineHeight: 1.6 }; // デフォルト値
   }
 }

@@ -27,6 +27,18 @@ function createMockChrome() {
       if (shouldReject.get) {
         return Promise.reject(shouldReject.get);
       }
+      
+      // 配列の場合の処理を修正
+      if (Array.isArray(keys)) {
+        const result = {};
+        keys.forEach(key => {
+          if (storage[key] !== undefined) {
+            result[key] = storage[key];
+          }
+        });
+        return Promise.resolve(result);
+      }
+      
       if (typeof keys === 'object' && keys !== null) {
         const result = { ...keys };
         Object.keys(keys).forEach(key => {
@@ -87,6 +99,10 @@ function createMockChrome() {
 
 test.beforeEach(() => {
   delete require.cache[require.resolve('../dist/background.js')];
+  // グローバルなchromeオブジェクトもクリア
+  if (global.chrome && global.chrome._clearStorage) {
+    global.chrome._clearStorage();
+  }
 });
 
 test('BackgroundService initializes correctly', async () => {
@@ -119,8 +135,8 @@ test('Settings initialization skips when settings exist', async () => {
   const mockChrome = createMockChrome();
   global.chrome = mockChrome;
   
-  // 既存の設定を準備
-  await mockChrome.storage.sync.set({ intensity: 4 });
+  // 既存の設定を準備（intensityとlineHeightの両方を設定）
+  await mockChrome.storage.sync.set({ intensity: 4, lineHeight: 2.0 });
   
   require('../dist/background.js');
   
@@ -130,7 +146,27 @@ test('Settings initialization skips when settings exist', async () => {
   
   // 既存の設定が保持されることを確認
   const storage = mockChrome._getStorage();
-  assert.equal(storage.intensity, 4, 'Should preserve existing settings');
+  assert.equal(storage.intensity, 4, 'Should preserve existing intensity setting');
+  assert.equal(storage.lineHeight, 2.0, 'Should preserve existing lineHeight setting');
+});
+
+test('Settings initialization adds missing lineHeight', async () => {
+  const mockChrome = createMockChrome();
+  global.chrome = mockChrome;
+  
+  // intensityのみ設定（lineHeightは未設定）
+  await mockChrome.storage.sync.set({ intensity: 0 });
+  
+  require('../dist/background.js');
+  
+  // インストールイベントをトリガー
+  await mockChrome._triggerInstalled();
+  await new Promise(resolve => setTimeout(resolve, 50));
+  
+  // intensityは保持され、lineHeightが追加されることを確認
+  const storage = mockChrome._getStorage();
+  assert.equal(storage.intensity, 0, 'Should preserve existing intensity setting');
+  assert.equal(storage.lineHeight, 1.6, 'Should add default lineHeight setting');
 });
 
 test('Settings initialization handles storage errors', async () => {

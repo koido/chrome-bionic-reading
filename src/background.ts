@@ -36,13 +36,19 @@ class BackgroundService {
   async initializeSettings(): Promise<void> {
     try {
       // 既存の設定をチェック
-      const result = await chrome.storage.sync.get('intensity');
+      const result = await chrome.storage.sync.get(['intensity', 'lineHeight']);
       
-      // 設定が存在しない場合のみデフォルト値を設定
-      if (result.intensity === undefined) {
+      // intensityもlineHeightも未定義 → デフォルト設定を保存
+      if (result.intensity === undefined && result.lineHeight === undefined) {
         await chrome.storage.sync.set(this.defaultSettings);
         console.log('Bionic Reading: デフォルト設定を初期化しました');
+      } 
+      // intensityは存在し、lineHeightが未定義 → lineHeightのみ追加
+      else if (result.intensity !== undefined && result.lineHeight === undefined) {
+        await chrome.storage.sync.set({ lineHeight: this.defaultSettings.lineHeight });
+        console.log('Bionic Reading: lineHeightのみ追加しました（既存ユーザー）');
       }
+      // それ以外は何もしない（既存設定を保持）
     } catch (error) {
       console.error('設定初期化エラー:', error);
     }

@@ -79,8 +79,13 @@ class OptionsController {
     // lineHeight
     this.lineHeightInput.addEventListener('input', () => {
       const lh = parseFloat(this.lineHeightInput.value);
-      document.getElementById('lh-val')!.textContent = lh.toString();
-      this.previewDiv.style.lineHeight = lh.toString();
+      if (!isNaN(lh)) {
+        document.getElementById('lh-val')!.textContent = lh.toString();
+        this.previewDiv.style.lineHeight = lh.toString();
+      } else {
+        // 無効な値の場合はプレビューを更新しない
+        document.getElementById('lh-val')!.textContent = '—';
+      }
     });
 
     // 保存ボタン
@@ -118,6 +123,10 @@ class OptionsController {
 
       const intensity = parseInt(selectedInput.value);
       const lineHeight = parseFloat(this.lineHeightInput.value);
+      if (isNaN(lineHeight)) {
+        this.showStatus('行間の値が不正です', 'error');
+        return;
+      }
       await chrome.storage.sync.set({ intensity, lineHeight });
       
       this.showStatus('✨ 設定を保存しました！', 'success');

@@ -53,5 +53,6 @@ npm run build
 
 cp manifest.json src/popup.html src/options.html dist/
 for size in 16 32 48 128; do
-  [ -f icon${size}.png ] && cp icon${size}.png dist/
-done 
+  [ -f src/assets/icon${size}.png ] && cp src/assets/icon${size}.png dist/
+done
+[ -f src/assets/icon_aid.svg ] && cp src/assets/icon_aid.svg dist/ 

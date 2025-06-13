@@ -26,7 +26,8 @@ Chrome extension that bolds the beginning of each word to aid reading.
 ## ビルド・配布用ファイル
 - `npm run build` または `scripts/build.sh` で `src/` のTypeScriptを `dist/` にビルドします。
 - `src/popup.html`、`src/options.html` も `dist/` にコピーしてください。
-- `icon16.png` などのアイコンファイルも `dist/` に配置してください。
+- アイコン画像（`icon16.png` など）は `src/assets/` ディレクトリにまとめて配置してください。
+- ビルド時（`npm run build` または `scripts/build.sh`）で自動的に `dist/` にコピーされます。
 
 ## トラブルシューティング
 

@@ -164,13 +164,13 @@
 <body>
   <div class="container">
     <div class="header">
-      <h1>Bionic Reading 設定</h1>
-      <p>読みやすさの強度をカスタマイズ</p>
+      <h1>Reading Aid</h1>
+      <p>読みやすさをカスタマイズ</p>
     </div>
     
     <div class="content">
       <div class="setting-group">
-        <div class="setting-title">Bionic Reading の強度</div>
+        <div class="setting-title">Bionic Reading の設定</div>
         <div class="setting-description">
           文章の読みやすさを向上させるため、各単語の最初の何文字を太字にするかを設定できます。
         </div>
@@ -231,6 +231,15 @@
             </div>
           </label>
         </div>
+      </div>
+      
+      <div class="setting-group">
+        <div class="setting-title">行間</div>
+        <div class="setting-description">
+          読みやすさに合わせて行間を調整できます（1.2〜2.0）。
+        </div>
+        <input type="range" id="line-height" min="1.2" max="2.0" step="0.1" value="1.6">
+        <span id="lh-val">1.6</span>
       </div>
       
       <div class="preview-section">

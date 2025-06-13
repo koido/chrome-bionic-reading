@@ -6,6 +6,7 @@ const { JSDOM } = require('jsdom');
 
 function createMockDocument() {
   const mockElements = [];
+  let styleElement = null;
   
   const doc = {
     createElement: (tag) => {
@@ -13,7 +14,8 @@ function createMockDocument() {
         tagName: tag,
         style: {},
         appendChild: () => {},
-        textContent: ''
+        textContent: '',
+        id: '',
       };
       mockElements.push(el);
       return el;
@@ -40,6 +42,10 @@ function createMockDocument() {
           await handler();
         }, 10);
       }
+    },
+    getElementById: (id) => {
+      // style要素の再利用を模倣
+      return mockElements.find(el => el.id === id) || null;
     }
   };
   

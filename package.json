@@ -1,7 +1,7 @@
 {
-  "name": "bionic-reading-extension",
-  "version": "1.0.0",
-  "description": "",
+  "name": "chrome-reading-aid",
+  "version": "1.1.0",
+  "description": "A Chrome extension to aid reading by customizing text style and spacing.",
   "main": "index.js",
   "scripts": {
     "test": "node --test --experimental-test-coverage test/*.test.js",

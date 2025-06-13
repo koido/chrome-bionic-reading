@@ -6,10 +6,12 @@
 
 interface BionicSettings {
   intensity: number; // 1=弱め, 2=やや弱め, 3=普通, 4=やや強め, 5=強め
+  lineHeight: number;
 }
 
 class OptionsController {
   private intensityInputs: NodeListOf<HTMLInputElement>;
+  private lineHeightInput: HTMLInputElement;
   private saveButton: HTMLButtonElement;
   private statusDiv: HTMLElement;
   private previewDiv: HTMLElement;
@@ -24,6 +26,7 @@ class OptionsController {
 
   constructor() {
     this.intensityInputs = document.querySelectorAll('input[name="intensity"]') as NodeListOf<HTMLInputElement>;
+    this.lineHeightInput = document.getElementById('line-height') as HTMLInputElement;
     this.saveButton = document.getElementById('save') as HTMLButtonElement;
     this.statusDiv = document.getElementById('status') as HTMLElement;
     this.previewDiv = document.getElementById('preview') as HTMLElement;
@@ -38,7 +41,7 @@ class OptionsController {
 
   async loadSettings(): Promise<void> {
     try {
-      const result = await chrome.storage.sync.get({ intensity: 2 });
+      const result = await chrome.storage.sync.get({ intensity: 2, lineHeight: 1.6 });
       const settings = result as BionicSettings;
       
       // ラジオボタンの選択状態を設定
@@ -51,6 +54,11 @@ class OptionsController {
       
       // プレビューを更新
       this.updatePreview(settings.intensity);
+      
+      // lineHeight
+      this.lineHeightInput.value = settings.lineHeight.toString();
+      document.getElementById('lh-val')!.textContent = settings.lineHeight.toString();
+      this.previewDiv.style.lineHeight = settings.lineHeight.toString();
       
     } catch (error) {
       console.error('設定の読み込みに失敗:', error);
@@ -66,6 +74,13 @@ class OptionsController {
         this.updatePreview(intensity);
         this.updateSelectedOption(input);
       });
+    });
+
+    // lineHeight
+    this.lineHeightInput.addEventListener('input', () => {
+      const lh = parseFloat(this.lineHeightInput.value);
+      document.getElementById('lh-val')!.textContent = lh.toString();
+      this.previewDiv.style.lineHeight = lh.toString();
     });
 
     // 保存ボタン
@@ -102,7 +117,8 @@ class OptionsController {
       }
 
       const intensity = parseInt(selectedInput.value);
-      await chrome.storage.sync.set({ intensity });
+      const lineHeight = parseFloat(this.lineHeightInput.value);
+      await chrome.storage.sync.set({ intensity, lineHeight });
       
       this.showStatus('✨ 設定を保存しました！', 'success');
       

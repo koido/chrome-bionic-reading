@@ -6,10 +6,11 @@
 
 interface BionicSettings {
   intensity: number; // 1=弱め, 2=やや弱め, 3=普通, 4=やや強め, 5=強め
+  lineHeight: number;
 }
 
 class BackgroundService {
-  private defaultSettings: BionicSettings = { intensity: 2 }; // デフォルト: やや弱め
+  private defaultSettings: BionicSettings = { intensity: 2, lineHeight: 1.6 }; // デフォルト: やや弱め
 
   constructor() {
     this.init();

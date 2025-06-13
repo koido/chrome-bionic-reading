@@ -6,18 +6,23 @@
 
 interface BionicSettings {
   intensity: number; // 1=弱め, 2=やや弱め, 3=普通, 4=やや強め, 5=強め
+  lineHeight: number; // 行間
 }
 
-let currentSettings: BionicSettings = { intensity: 2 }; // デフォルト: やや弱め
+let currentSettings: BionicSettings = { intensity: 2, lineHeight: 1.6 }; // デフォルト: やや弱め
 
 /**
  * Injects a global style element to tweak page line height.
  * @returns {void}
  */
 function injectStyle(): void {
-  const style = document.createElement('style');
-  style.textContent = `body { line-height: 1.6 !important; }`;
-  document.head.appendChild(style);
+  let style = document.getElementById('bionic-style') as HTMLStyleElement | null;
+  if (!style) {
+    style = document.createElement('style');
+    style.id = 'bionic-style';
+    document.head.appendChild(style);
+  }
+  style.textContent = `body { line-height: ${currentSettings.lineHeight} !important; }`;
 }
 
 /**
@@ -101,11 +106,11 @@ function traverse(root: Node): void {
  */
 async function loadSettings(): Promise<void> {
   try {
-    const result = await chrome.storage.sync.get({ intensity: 2 });
+    const result = await chrome.storage.sync.get({ intensity: 2, lineHeight: 1.6 });
     currentSettings = result as BionicSettings;
   } catch (error) {
     console.error('設定の読み込みに失敗:', error);
-    currentSettings = { intensity: 2 }; // デフォルト値
+    currentSettings = { intensity: 2, lineHeight: 1.6 }; // デフォルト値
   }
 }
 
